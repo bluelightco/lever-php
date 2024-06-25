@@ -1,7 +1,5 @@
 name: Deploy to Production
 
-name: Deploy to Packagist
-
 on:
   workflow_run:
     workflows: ["Run Tests", "Code Style Check"]
