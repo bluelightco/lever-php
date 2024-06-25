@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Deploy
 
 on:
   push:
@@ -48,13 +48,15 @@ jobs:
         run: composer test
 
   deploy:
+    name: Deploy to Packagist
+    needs: [lint, tests]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Packagist Update
-        uses: mnavarrocarter/packagist-update@v1.0.0
+        uses: mnavarrocarter/packagist-update@v1.0
         with:
           username: ${{ secrets.PACKAGIST_USERNAME }}
           api_token: ${{ secrets.PACKAGIST_API_TOKEN }}
