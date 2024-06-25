@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-        - uses: actions/checkout@v1
+        - uses: actions/checkout@v3
         - name: "laravel-pint"
           uses: aglipanci/laravel-pint-action@2.0.0
           with:
@@ -23,7 +23,6 @@ jobs:
             testMode: true
             configPath: "pint.json"
             pintVersion: 1.8.0
-            onlyDirty: true
 
   tests:
     name: Execute Tests
@@ -53,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Packagist Update
         uses: mnavarrocarter/packagist-update@v1.0
