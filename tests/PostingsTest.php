@@ -1,6 +1,6 @@
 <?php
 
-namespace ViaWork\LeverPhp\Tests;
+namespace Bluelightco\LeverPhp\Tests;
 
 use GuzzleHttp\Psr7\Response;
 
@@ -15,7 +15,7 @@ class PostingsTest extends TestCase
             new Response(200, [], '{"data": {}}'),
             new Response(200, [], '{"data": {}}'),
             new Response(200, [], '{"data": {}}'),
-            );
+        );
 
         $this->lever->postings()->fetch();
         $this->lever->postings()->team('Accounting')->fetch();

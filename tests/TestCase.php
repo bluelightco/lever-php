@@ -1,18 +1,21 @@
 <?php
 
-namespace ViaWork\LeverPhp\Tests;
+namespace Bluelightco\LeverPhp\Tests;
 
+use Bluelightco\LeverPhp\Http\Client\LeverClient;
+use Bluelightco\LeverPhp\Http\Middleware\QueryStringCleanerMiddleware;
 use GrahamCampbell\GuzzleFactory\GuzzleFactory;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
-use ViaWork\LeverPhp\DuplicateAggregatorMiddleware;
-use ViaWork\LeverPhp\LeverPhp;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    /**
+     * @var LeverClient
+     */
     protected $lever;
 
     protected $mockHandler;
@@ -29,15 +32,14 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $mock = HandlerStack::create($this->mockHandler);
 
-        $mock->push(DuplicateAggregatorMiddleware::buildQuery());
-
+        $mock->push(QueryStringCleanerMiddleware::buildQuery());
         $mock->push(RateLimiterMiddleware::perSecond(1));
 
-        $stack = GuzzleFactory::handler(self::BACKOFF_TEST, null, $mock);
+        $stack = GuzzleFactory::handler(backoff: self::BACKOFF_TEST, stack: $mock);
 
         $stack->push(Middleware::history($this->container));
 
-        $client = new Client([
+        $guzzleClient = new Client([
             'base_uri' => '',
             'headers' => [
                 'Accept' => 'application/json',
@@ -46,6 +48,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'handler' => $stack,
         ]);
 
-        $this->lever = new LeverPhp(null, $client, null);
+        $this->lever = new LeverClient(client: $guzzleClient);
     }
 }

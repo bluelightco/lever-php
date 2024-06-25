@@ -4,6 +4,8 @@ docs
 vendor
 coverage
 .idea
-.env*
+.env
+.env.testing
 phpunit.xml
 .phpunit.result.cache
+.vscode

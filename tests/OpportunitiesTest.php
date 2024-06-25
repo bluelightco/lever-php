@@ -1,6 +1,6 @@
 <?php
 
-namespace ViaWork\LeverPhp\Tests;
+namespace Bluelightco\LeverPhp\Tests;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
@@ -9,8 +9,11 @@ use Illuminate\Support\LazyCollection;
 class OpportunitiesTest extends TestCase
 {
     private $offers = __DIR__.'/fixtures/offers.json';
+
     private $opportunity = __DIR__.'/fixtures/opportunity.json';
+
     private $opportunities = __DIR__.'/fixtures/opportunities.json';
+
     private $opportunitiesNextFalse = __DIR__.'/fixtures/opportunities-hasNext-false.json';
 
     /** @test */
@@ -19,7 +22,7 @@ class OpportunitiesTest extends TestCase
         $this->mockHandler->append(
             new Response(200, [], file_get_contents($this->opportunities)),
             new Response(200, [], file_get_contents($this->opportunitiesNextFalse)),
-            );
+        );
 
         $opportunities = $this->lever->opportunities()->fetch();
 
@@ -33,7 +36,7 @@ class OpportunitiesTest extends TestCase
     {
         $this->mockHandler->append(
             new Response(200, [], file_get_contents($this->opportunity)),
-            );
+        );
 
         $opportunity = $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')->fetch();
 
@@ -81,7 +84,7 @@ class OpportunitiesTest extends TestCase
     /** @test */
     public function create_opportunity()
     {
-        $this->mockHandler->append(new Response(200, [], file_get_contents($this->opportunity)), );
+        $this->mockHandler->append(new Response(200, [], file_get_contents($this->opportunity)));
 
         $newOpportunity = [
             'name' => 'Shane Smith',
@@ -129,7 +132,7 @@ class OpportunitiesTest extends TestCase
     /** @test */
     public function fetching_offers()
     {
-        $this->mockHandler->append(new Response(200, [], file_get_contents($this->offers)), );
+        $this->mockHandler->append(new Response(200, [], file_get_contents($this->offers)));
 
         $offers = $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')->offers()->fetch();
 
@@ -151,7 +154,7 @@ class OpportunitiesTest extends TestCase
             new Response(200, [], '{"data": {}}'),
             new Response(200, [], '{"data": {}}'),
             new Response(200, [], '{"data": {}}'),
-            );
+        );
 
         $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')->resumes()->fetch();
         $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')
@@ -187,7 +190,7 @@ class OpportunitiesTest extends TestCase
     {
         $this->mockHandler->append(
             new Response(200, [], file_get_contents($this->opportunity)),
-            );
+        );
 
         $opportunity = $this->lever->opportunities()->email('shane@exampleq3.com')->fetch();
 
@@ -235,7 +238,7 @@ class OpportunitiesTest extends TestCase
         $this->mockHandler->append(new Response(200, [], '{"data": {}}'));
 
         $opportunities = $this->lever->opportunities()->archived()
-            ->putUpdate(['reason' => '63dd55b2-a99f-4e7b-985f-22c7bf80ab42']);
+            ->update(['reason' => '63dd55b2-a99f-4e7b-985f-22c7bf80ab42']);
 
         $this->assertEquals(
             'opportunities/archived',

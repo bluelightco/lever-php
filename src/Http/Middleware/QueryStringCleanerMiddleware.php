@@ -1,10 +1,10 @@
 <?php
 
-namespace ViaWork\LeverPhp;
+namespace Bluelightco\LeverPhp\Http\Middleware;
 
 use Psr\Http\Message\RequestInterface;
 
-class DuplicateAggregatorMiddleware
+class QueryStringCleanerMiddleware
 {
     public static function buildQuery()
     {

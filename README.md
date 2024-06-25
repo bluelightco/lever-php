@@ -21,7 +21,7 @@ composer require via-work/lever-php
 #### PHP
 
 ``` php
-use \ViaWork\LeverPhp\LeverPhp;
+use \Bluelightco\LeverPhp\LeverPhp;
 
 $lever = new LeverPhp('leverKey');
 
@@ -36,7 +36,7 @@ After installing, the package will automatically register its service provider.
 To publish the config file to config/lever-php.php run:
 
 ``` bash
-php artisan vendor:publish --provider="ViaWork\LeverPhp\LeverPhpServiceProvider"
+php artisan vendor:publish --provider="Bluelightco\LeverPhp\LeverPhpServiceProvider"
 ```
 
 After changing your API keys in your ENV file accordingly, you can call a Lever instance as follows:
