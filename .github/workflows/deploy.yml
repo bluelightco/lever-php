@@ -5,7 +5,7 @@ name: Deploy to Packagist
 on:
   workflow_run:
     workflows: ["Run Tests", "Code Style Check"]
-    branches: [main]
+    branches: [master]
     types:
       - completed
 
