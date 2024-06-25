@@ -1,0 +1,23 @@
+name: Deploy to Production
+
+name: Deploy to Packagist
+
+on:
+  workflow_run:
+    workflows: ["Run Tests", "Code Style Check"]
+    branches: [main]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Packagist Update
+        uses: mnavarrocarter/packagist-update@v1.0.0
+        with:
+          username: ${{ secrets.PACKAGIST_USERNAME }}
+          api_token: ${{ secrets.PACKAGIST_API_TOKEN }}
