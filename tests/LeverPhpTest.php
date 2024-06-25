@@ -1,18 +1,18 @@
 <?php
 
-namespace ViaWork\LeverPhp\Tests;
+namespace Bluelightco\LeverPhp\Tests;
 
+use Bluelightco\LeverPhp\Http\Client\LeverClient;
 use GuzzleHttp\Psr7\Response;
 use ReflectionClass;
-use ViaWork\LeverPhp\LeverPhp;
 
 class LeverPhpTest extends TestCase
 {
     /** @test */
     public function options_method_gives_correct_output_when_has_files_included()
     {
-        $class = new ReflectionClass(LeverPhp::class);
-        $method = $class->getMethod('options');
+        $class = new ReflectionClass(LeverClient::class);
+        $method = $class->getMethod('prepareOptions');
         $method->setAccessible(true);
 
         $body = [
@@ -126,8 +126,8 @@ class LeverPhpTest extends TestCase
     /** @test */
     public function options_method_gives_correct_output_when_has_files_is_not_included()
     {
-        $class = new ReflectionClass(LeverPhp::class);
-        $method = $class->getMethod('options');
+        $class = new ReflectionClass(LeverClient::class);
+        $method = $class->getMethod('prepareOptions');
         $method->setAccessible(true);
 
         $body = [
@@ -163,7 +163,7 @@ class LeverPhpTest extends TestCase
             new Response(429, [], '{"data": {}}'),
             new Response(429, [], '{"data": {}}'),
             new Response(200, [], '{"data": {}}'),
-            );
+        );
 
         $this->lever->opportunities()->fetch();
 
