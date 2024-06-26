@@ -1,10 +1,7 @@
 # Lever PHP
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/bluelightco/lever-php?style=flat-square)](https://packagist.org/packages/bluelightco/lever-php)
-[![Build Status](https://img.shields.io/travis/bluelightco/lever-php/master.svg?style=flat-square)](https://travis-ci.org/bluelightco/lever-php)
-[![Quality Score](https://img.shields.io/scrutinizer/g/bluelightco/lever-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/bluelightco/lever-php)
 [![Total Downloads](https://img.shields.io/packagist/dt/bluelightco/lever-php.svg?style=flat-square)](https://packagist.org/packages/bluelightco/lever-php)
-![StyleCI](https://github.styleci.io/repos/238786347/shield?branch=master)
 
 Super-simple Lever Data API v1 wrapper in PHP with support for Laravel.
 
@@ -36,7 +33,7 @@ After installing, the package will automatically register its service provider.
 To publish the config file to config/lever-php.php run:
 
 ``` bash
-php artisan vendor:publish --provider="Bluelightco\LeverPhp\LeverPhpServiceProvider"
+php artisan vendor:publish --provider="Bluelightco\LeverPhp\Providers\LeverServiceProvider" --tag="config"
 ```
 
 After changing your API keys in your ENV file accordingly, you can call a Lever instance as follows:
@@ -215,6 +212,7 @@ If you discover any security related issues, please email dev@via.work instead o
 - [Omar Sánchez](https://github.com/omarsancas)
 - [Alfonso Strotgen](https://github.com/strotgen)
 - [Via.work](https://github.com/via-work)
+- [Javier Villatoro](https://github.com/strotgen)
 - [Bluelight](https://github.com/bluelightco)
 - [All Contributors](../../contributors)
 
