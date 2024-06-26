@@ -60,7 +60,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Bluelightco\\LeverPhp\\LeverServiceProvider"
+                "Bluelightco\\LeverPhp\\Providers\\LeverServiceProvider"
             ],
             "aliases": {
                 "Lever": "Bluelightco\\LeverPhp\\Facades\\Lever"
