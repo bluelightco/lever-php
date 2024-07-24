@@ -11,7 +11,7 @@ class LeverServiceProvider extends ServiceProvider
     {
         $this->app->singleton('lever-php', function ($app) {
             return new LeverClient(
-                apiKey: config('lever.api_key'),
+                apiKey: config('lever-php.api_key'),
             );
         });
     }
