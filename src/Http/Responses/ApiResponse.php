@@ -16,7 +16,7 @@ class ApiResponse
         return new self($response);
     }
 
-    public function getJson(): array
+    public function toArray(): array
     {
         return json_decode($this->response->getBody()->getContents(), true);
     }

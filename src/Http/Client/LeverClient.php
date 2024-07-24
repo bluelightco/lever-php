@@ -104,7 +104,7 @@ class LeverClient
 
     public function create(array $body, string $method = 'post'): array
     {
-        $response = ApiResponse::using($this->$method($body))->getJson();
+        $response = ApiResponse::using($this->$method($body))->toArray();
 
         return $response;
     }
@@ -124,7 +124,7 @@ class LeverClient
         $endpoint = $this->endpoint;
         $options = $this->options;
 
-        $response = ApiResponse::using($this->get())->getJson();
+        $response = ApiResponse::using($this->get())->toArray();
 
         if (! array_key_exists('hasNext', $response)) {
             return $response['data'];
@@ -143,7 +143,7 @@ class LeverClient
                 if (! empty($response['next'])) {
                     $this->options['query']['offset'] = json_decode(urldecode($response['next']));
 
-                    $response = ApiResponse::using($this->get())->getJson();
+                    $response = ApiResponse::using($this->get())->toArray();
                 } else {
                     return;
                 }
@@ -295,7 +295,7 @@ class LeverClient
     {
         $this->endpoint .= '/apply';
 
-        $application = ApiResponse::using($this->post($body))->getJson();
+        $application = ApiResponse::using($this->post($body))->toArray();
 
         return $application;
     }
