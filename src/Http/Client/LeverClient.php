@@ -19,8 +19,6 @@ class LeverClient
 {
     const BACKOFF_TIME = 1500;
 
-    private $client;
-
     private $baseUrl;
 
     private $endpoint = '';
@@ -28,12 +26,16 @@ class LeverClient
     private $options = [];
 
     public function __construct(
-        private string $apiKey = '',
+        private ?string $apiKey = null,
         private bool $checkUuid = true,
         private bool $checkEnums = true,
-        ?Client $client = null,
+        private ?Client $client = null,
         ?Store $store = null
     ) {
+        if (! $this->apiKey) {
+            $this->apiKey = config('lever-php.api_key');
+        }
+
         if (! $client) {
             $this->baseUrl = config('lever-php.base_url');
 
@@ -53,8 +55,6 @@ class LeverClient
                 ],
                 self::BACKOFF_TIME
             );
-        } else {
-            $this->client = $client;
         }
 
         $this->options = [];
@@ -109,14 +109,18 @@ class LeverClient
         return $response;
     }
 
-    public function update(array $body): ResponseInterface
+    public function update(array $body): array
     {
-        return $this->post($body);
+        $response = ApiResponse::using($this->post($body))->toArray();
+
+        return $response;
     }
 
-    public function putUpdate(array $body): ResponseInterface
+    public function putUpdate(array $body): array
     {
-        return $this->put($body);
+        $response = ApiResponse::using($this->put($body))->toArray();
+
+        return $response;
     }
 
     public function fetch(): LazyCollection|array

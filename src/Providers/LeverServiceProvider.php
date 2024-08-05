@@ -9,11 +9,7 @@ class LeverServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton('lever-php', function ($app) {
-            return new LeverClient(
-                apiKey: config('lever-php.api_key'),
-            );
-        });
+        $this->app->singleton(LeverClient::class, fn ($app) => null);
     }
 
     public function boot()

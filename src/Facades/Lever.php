@@ -3,6 +3,7 @@
 namespace Bluelightco\LeverPhp\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Bluelightco\LeverPhp\Http\Client\LeverClient;
 
 /**
  * @method static \Psr\Http\Message\ResponseInterface get()
@@ -47,6 +48,6 @@ class Lever extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'lever-php';
+        return LeverClient::class;
     }
 }
