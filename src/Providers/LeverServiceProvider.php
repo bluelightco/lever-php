@@ -10,7 +10,7 @@ class LeverServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(LeverClient::class, function ($app) {
-            return null;
+            return new LeverClient();
         });
     }
 
