@@ -4,6 +4,7 @@ namespace Bluelightco\LeverPhp\Tests;
 
 use Bluelightco\LeverPhp\Http\Client\LeverClient;
 use Bluelightco\LeverPhp\Http\Middleware\QueryStringCleanerMiddleware;
+use Bluelightco\LeverPhp\Providers\LeverServiceProvider;
 use GrahamCampbell\GuzzleFactory\GuzzleFactory;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -48,6 +49,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'handler' => $stack,
         ]);
 
-        $this->lever = new LeverClient(client: $guzzleClient);
+        $this->lever = new LeverClient(apiKey: 'x', client: $guzzleClient);
     }
 }
