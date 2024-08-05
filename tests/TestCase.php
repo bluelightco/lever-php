@@ -4,7 +4,6 @@ namespace Bluelightco\LeverPhp\Tests;
 
 use Bluelightco\LeverPhp\Http\Client\LeverClient;
 use Bluelightco\LeverPhp\Http\Middleware\QueryStringCleanerMiddleware;
-use Bluelightco\LeverPhp\Providers\LeverServiceProvider;
 use GrahamCampbell\GuzzleFactory\GuzzleFactory;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
