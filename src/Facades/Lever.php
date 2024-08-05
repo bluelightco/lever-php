@@ -2,8 +2,8 @@
 
 namespace Bluelightco\LeverPhp\Facades;
 
-use Illuminate\Support\Facades\Facade;
 use Bluelightco\LeverPhp\Http\Client\LeverClient;
+use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \Psr\Http\Message\ResponseInterface get()
