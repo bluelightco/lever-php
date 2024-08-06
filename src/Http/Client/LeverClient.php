@@ -69,46 +69,30 @@ class LeverClient
 
     private function sendRequest($method, $endpoint, array $options = []): ResponseInterface
     {
-        return $this->client->request($method, $endpoint, $options);
+        try {
+            return $this->client->request($method, $endpoint, $options);
+        } catch (ClientException $e) {
+            $this->handleException($e, $method, $endpoint, $options);
+        } catch (Exception $e) {
+            $this->handleException($e, $method, $endpoint, $options);
+        } finally {
+            $this->reset();
+        }
     }
 
     public function get(): ResponseInterface
     {
-        try {
-            return $this->sendRequest('GET', $this->endpoint, $this->options);
-        } catch (ClientException $e) {
-            $this->handleException($e, __METHOD__);
-        } catch (Exception $e) {
-            $this->handleException($e, __METHOD__);
-        } finally {
-            $this->reset();
-        }
+        return $this->sendRequest('GET', $this->endpoint, $this->options);
     }
 
     public function post(array $body = []): ResponseInterface
     {
-        try {
-            return $this->sendRequest('POST', $this->endpoint, $this->prepareOptions($body));
-        } catch (ClientException $e) {
-            $this->handleException($e, __METHOD__, $body);
-        } catch (Exception $e) {
-            $this->handleException($e, __METHOD__, $body);
-        } finally {
-            $this->reset();
-        }
+        return $this->sendRequest('POST', $this->endpoint, $this->prepareOptions($body));
     }
 
     public function put(array $body = []): ResponseInterface
     {
-        try {
-            return $this->sendRequest('PUT', $this->endpoint, $this->prepareOptions($body));
-        } catch (ClientException $e) {
-            $this->handleException($e, __METHOD__, $body);
-        } catch (Exception $e) {
-            $this->handleException($e, __METHOD__, $body);
-        } finally {
-            $this->reset();
-        }
+        return $this->sendRequest('PUT', $this->endpoint, $this->prepareOptions($body));
     }
 
     public function create(array $body, string $method = 'post'): array
@@ -486,16 +470,18 @@ class LeverClient
         return true;
     }
 
-    private function handleException(Exception $e, string $method, array $body = []): void
+    private function handleException(Exception $e, string $method, string $endpoint, array $options = []): void
     {
         $logDetails = [
             'package' => 'Bluelightco\LeverPhp',
             'method' => $method,
-            'endpoint' => $this->endpoint,
+            'endpoint' => $endpoint,
+            'options' => json_encode($options),
+            'response' => null,
         ];
 
-        if (! empty($body)) {
-            $logDetails['body'] = json_encode($body);
+        if (! empty($options)) {
+            $logDetails['options'] = json_encode($options);
         }
 
         if ($e instanceof ClientException) {
