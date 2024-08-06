@@ -271,7 +271,7 @@ class LeverClient
     {
         $this->endpoint .= '/download';
 
-        return $this->get()->getBody();
+        return $this->sendRequest('GET', $this->endpoint, $this->options)->getBody();
     }
 
     public function offers(): self

@@ -157,12 +157,9 @@ class OpportunitiesTest extends TestCase
         );
 
         $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')->resumes()->fetch();
-        $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')
-            ->resumes('6a1e4b79-75a3-454f-9417-ea79612b9585')->fetch();
-        $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')
-            ->resumes('6a1e4b79-75a3-454f-9417-ea79612b9585')->download();
-        $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')
-            ->notes()->create([]);
+        $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')->resumes('6a1e4b79-75a3-454f-9417-ea79612b9585')->fetch();
+        $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')->resumes('6a1e4b79-75a3-454f-9417-ea79612b9585')->download();
+        $this->lever->opportunities('250d8f03-738a-4bba-a671-8a3d73477145')->notes()->create([]);
 
         $this->assertEquals(
             'opportunities/250d8f03-738a-4bba-a671-8a3d73477145/resumes',
