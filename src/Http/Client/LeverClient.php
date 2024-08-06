@@ -472,22 +472,18 @@ class LeverClient
 
     private function handleException(Exception $e, string $method, string $endpoint, array $options = []): void
     {
-        $logDetails = [
-            'package' => 'Bluelightco\LeverPhp',
-            'method' => $method,
-            'endpoint' => $endpoint,
-            'options' => json_encode($options),
-            'response' => null,
-        ];
+        Log::error("HTTP $method error: ".$e->getMessage(), [
+            'message' => $e->getMessage(),
+            'package_context' => [
+                'package' => 'Bluelightco\LeverPhp',
+                'method' => $method,
+                'endpoint' => $endpoint,
+                'options' => json_encode($options),
+                'response' => ($e instanceof ClientException ? ($e->getResponse() ? $e->getResponse()->getBody()->getContents() : null) : null),
+            ],
+            'exception' => $e,
+        ]);
 
-        if ($e instanceof ClientException) {
-            $logDetails['response'] = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null;
-        }
-
-        Log::error("HTTP $method error: ".$e->getMessage(), $logDetails);
-
-        $type = $e instanceof ClientException ? 'ClientException' : 'Exception';
-
-        throw new LeverClientException("$type error executing HTTP $method. Please check the logs for more details.");
+        throw new LeverClientException("Error executing HTTP $method. Please check the logs for more details.");
     }
 }
