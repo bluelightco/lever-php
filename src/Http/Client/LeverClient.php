@@ -14,6 +14,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Spatie\GuzzleRateLimiterMiddleware\Store;
+use Illuminate\Support\Facades\Log;
+use Bluelightco\LeverPhp\Exceptions\LeverClientException;
+use Exception;
 
 class LeverClient
 {
@@ -74,7 +77,9 @@ class LeverClient
         try {
             return $this->sendRequest('GET', $this->endpoint, $this->options);
         } catch (ClientException $e) {
-            throw $e;
+            $this->handleException($e, __METHOD__);
+        } catch (Exception $e) {
+            $this->handleException($e, __METHOD__);
         } finally {
             $this->reset();
         }
@@ -85,7 +90,9 @@ class LeverClient
         try {
             return $this->sendRequest('POST', $this->endpoint, $this->prepareOptions($body));
         } catch (ClientException $e) {
-            throw $e;
+            $this->handleException($e, __METHOD__, $body);
+        } catch (Exception $e) {
+            $this->handleException($e, __METHOD__, $body);
         } finally {
             $this->reset();
         }
@@ -96,7 +103,9 @@ class LeverClient
         try {
             return $this->sendRequest('PUT', $this->endpoint, $this->prepareOptions($body));
         } catch (ClientException $e) {
-            throw $e;
+            $this->handleException($e, __METHOD__, $body);
+        } catch (Exception $e) {
+            $this->handleException($e, __METHOD__, $body);
         } finally {
             $this->reset();
         }
@@ -475,5 +484,28 @@ class LeverClient
         }
 
         return true;
+    }
+
+    private function handleException(\Exception $e, string $method, array $body = []): void
+    {
+        $logDetails = [
+            'package' => 'Bluelightco\LeverPhp',
+            'method' => $method,
+            'endpoint' => $this->endpoint,
+        ];
+
+        if (! empty($body)) {
+            $logDetails['body'] = json_encode($body);
+        }
+
+        if ($e instanceof ClientException) {
+            $logDetails['response'] = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null;
+        }
+
+        Log::error("HTTP Error in $method: " . $e->getMessage(), $logDetails);
+
+        $type = $e instanceof ClientException ? 'ClientException' : 'Exception';
+
+        throw new LeverClientException("$type error executing HTTP request in $method. Please check the logs for more details.");
     }
 }
