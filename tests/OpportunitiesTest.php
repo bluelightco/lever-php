@@ -4,7 +4,7 @@ namespace Bluelightco\LeverPhp\Tests;
 
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\LazyCollection;
-use Bluelightco\LeverPhp\Exceptions\LeverClientException;
+use RuntimeException;
 
 class OpportunitiesTest extends TestCase
 {
@@ -108,7 +108,7 @@ class OpportunitiesTest extends TestCase
     /** @test */
     public function fail_to_create_opportunity_when_no_perform_as_parameter_included()
     {
-        $this->expectException(LeverClientException::class);
+        $this->expectException(RuntimeException::class);
 
         $this->mockHandler->append(new Response(400, [],
             '{"code": "BadRequestError", "message": "Missing perform_as parameter. Please specify a user for which to perform this create."}'

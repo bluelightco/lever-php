@@ -2,21 +2,21 @@
 
 namespace Bluelightco\LeverPhp\Http\Client;
 
+use Bluelightco\LeverPhp\Exceptions\LeverClientException;
 use Bluelightco\LeverPhp\Http\Middleware\LeverRateStore;
 use Bluelightco\LeverPhp\Http\Middleware\QueryStringCleanerMiddleware;
 use Bluelightco\LeverPhp\Http\Responses\ApiResponse;
+use Exception;
 use GrahamCampbell\GuzzleFactory\GuzzleFactory;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\HandlerStack;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\LazyCollection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Spatie\GuzzleRateLimiterMiddleware\Store;
-use Illuminate\Support\Facades\Log;
-use Bluelightco\LeverPhp\Exceptions\LeverClientException;
-use Exception;
 
 class LeverClient
 {
@@ -486,7 +486,7 @@ class LeverClient
         return true;
     }
 
-    private function handleException(\Exception $e, string $method, array $body = []): void
+    private function handleException(Exception $e, string $method, array $body = []): void
     {
         $logDetails = [
             'package' => 'Bluelightco\LeverPhp',
@@ -502,7 +502,7 @@ class LeverClient
             $logDetails['response'] = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null;
         }
 
-        Log::error("HTTP Error in $method: " . $e->getMessage(), $logDetails);
+        Log::error("HTTP Error in $method: ".$e->getMessage(), $logDetails);
 
         $type = $e instanceof ClientException ? 'ClientException' : 'Exception';
 
