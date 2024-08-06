@@ -2,7 +2,6 @@
 
 namespace Bluelightco\LeverPhp\Http\Client;
 
-use Bluelightco\LeverPhp\Exceptions\LeverClientException;
 use Bluelightco\LeverPhp\Http\Middleware\LeverRateStore;
 use Bluelightco\LeverPhp\Http\Middleware\QueryStringCleanerMiddleware;
 use Bluelightco\LeverPhp\Http\Responses\ApiResponse;
@@ -15,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\LazyCollection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Spatie\GuzzleRateLimiterMiddleware\Store;
 
@@ -484,6 +484,6 @@ class LeverClient
             'exception' => $e,
         ]);
 
-        throw new LeverClientException("Error executing HTTP $method. Please check the logs for more details.");
+        throw new RuntimeException("Error executing HTTP $method. Please check the logs for more details.");
     }
 }
