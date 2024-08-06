@@ -80,40 +80,40 @@ class LeverClient
         }
     }
 
-    public function get(): ResponseInterface
+    public function get(): array
     {
-        return $this->sendRequest('GET', $this->endpoint, $this->options);
+        $response = $this->sendRequest('GET', $this->endpoint, $this->options);
+
+        return ApiResponse::using($response)->toArray();
     }
 
-    public function post(array $body = []): ResponseInterface
+    public function post(array $body = []): array
     {
-        return $this->sendRequest('POST', $this->endpoint, $this->prepareOptions($body));
+        $response = $this->sendRequest('POST', $this->endpoint, $this->prepareOptions($body));
+
+        return ApiResponse::using($response)->toArray();
     }
 
-    public function put(array $body = []): ResponseInterface
+    public function put(array $body = []): array
     {
-        return $this->sendRequest('PUT', $this->endpoint, $this->prepareOptions($body));
+        $response = $this->sendRequest('PUT', $this->endpoint, $this->prepareOptions($body));
+
+        return ApiResponse::using($response)->toArray();
     }
 
     public function create(array $body, string $method = 'post'): array
     {
-        $response = ApiResponse::using($this->$method($body))->toArray();
-
-        return $response;
+        return $this->$method($body);
     }
 
     public function update(array $body): array
     {
-        $response = ApiResponse::using($this->post($body))->toArray();
-
-        return $response;
+        return $this->post($body);
     }
 
     public function putUpdate(array $body): array
     {
-        $response = ApiResponse::using($this->put($body))->toArray();
-
-        return $response;
+        return $this->put($body);
     }
 
     public function fetch(): LazyCollection|array
@@ -121,7 +121,7 @@ class LeverClient
         $endpoint = $this->endpoint;
         $options = $this->options;
 
-        $response = ApiResponse::using($this->get())->toArray();
+        $response = $this->get();
 
         if (! array_key_exists('hasNext', $response)) {
             return $response['data'];
@@ -140,7 +140,7 @@ class LeverClient
                 if (! empty($response['next'])) {
                     $this->options['query']['offset'] = json_decode(urldecode($response['next']));
 
-                    $response = ApiResponse::using($this->get())->toArray();
+                    $response = $this->get();
                 } else {
                     return;
                 }
@@ -292,9 +292,7 @@ class LeverClient
     {
         $this->endpoint .= '/apply';
 
-        $application = ApiResponse::using($this->post($body))->toArray();
-
-        return $application;
+        return $this->post($body);
     }
 
     public function notes(?string $noteId = null): self
