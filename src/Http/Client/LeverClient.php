@@ -480,18 +480,14 @@ class LeverClient
             'response' => null,
         ];
 
-        if (! empty($options)) {
-            $logDetails['options'] = json_encode($options);
-        }
-
         if ($e instanceof ClientException) {
             $logDetails['response'] = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null;
         }
 
-        Log::error("HTTP Error in $method: ".$e->getMessage(), $logDetails);
+        Log::error("HTTP $method error: ".$e->getMessage(), $logDetails);
 
         $type = $e instanceof ClientException ? 'ClientException' : 'Exception';
 
-        throw new LeverClientException("$type error executing HTTP request in $method. Please check the logs for more details.");
+        throw new LeverClientException("$type error executing HTTP $method. Please check the logs for more details.");
     }
 }
