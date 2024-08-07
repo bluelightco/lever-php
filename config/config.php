@@ -20,38 +20,25 @@ return [
     | This value is the base URL for the Lever API.
     |
     */
+
     'base_url' => env('LEVER_BASE_URL', 'https://api.lever.co/v1/'),
 
     /*
     |--------------------------------------------------------------------------
-    | Lever User Id
+    | Lever Rate Limit
     |--------------------------------------------------------------------------
     |
-    | This value is the user id of the user to use for the Lever API.
+    | This value is the rate limit for the Lever API.
+    |
+    | rate_limit.cache_key: The cache key to store the rate limit data. Default: 'lever-rate-limiter'
+    | rate_limit.max_cache_size: The maximum size of the cache in bytes. Default: 400000 bytes = 400 KB
+    | rate_limit.cache_ttl: The time-to-live (TTL) for the cache in seconds. Default: 300 seconds = 5 minutes
     |
     */
 
-    'user_email' => env('LEVER_USER_ID', ''),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Lever User Email
-    |--------------------------------------------------------------------------
-    |
-    | This value is the email of the user to use for the Lever API.
-    |
-    */
-
-    'user_email' => env('LEVER_USER_EMAIL', ''),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Lever Enabled
-    |--------------------------------------------------------------------------
-    |
-    | This value is the flag to enable or disable the Lever API.
-    |
-    */
-
-    'enabled' => env('LEVER_ENABLED', false),
+    'rate_limit' => [
+        'cache_key' => env('LEVER_RATE_LIMIT_CACHE_KEY', 'lever-rate-limiter'),
+        'max_cache_size' => env('LEVER_RATE_LIMIT_MAX_CACHE_SIZE', 400000),
+        'cache_ttl' => env('LEVER_RATE_LIMIT_CACHE_TTL', 300),
+    ],
 ];
