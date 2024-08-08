@@ -3,6 +3,7 @@
 namespace Bluelightco\LeverPhp\Http\Middleware;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Spatie\GuzzleRateLimiterMiddleware\Store;
 
 /**
@@ -25,31 +26,33 @@ class LeverRateStore implements Store
 
     public function get(): array
     {
+        // Retrieve the entire data from cache
         $data = Cache::get($this->cacheKey, []);
 
-        // Check the size of the data in the cache
-        if ($this->getCacheSize($data) > $this->maxCacheSize) {
-            // If the data is too large, clear the cache
-            Cache::forget($this->cacheKey);
+        // Filter out any timestamps that are older than the cacheTtl
+        $filteredData = array_filter($data, function ($timestamp) {
+            return $timestamp >= now()->timestamp - $this->cacheTtl;
+        });
 
-            return [];
-        }
-
-        return $data;
+        return $filteredData;
     }
 
     public function push(int $timestamp, int $limit)
     {
-        $data = array_merge($this->get(), [$timestamp]);
+        // Retrieve the current filtered data
+        $data = $this->get();
 
-        // Check the size of the data before saving it
-        if ($this->getCacheSize($data) <= $this->maxCacheSize) {
-            Cache::put($this->cacheKey, $data, $this->cacheTtl);
-        } else {
-            // If the data is too large, clear the cache and save only the new data
-            Cache::forget($this->cacheKey);
-            Cache::put($this->cacheKey, [$timestamp], $this->cacheTtl);
+        // Add the new timestamp
+        $data[] = $timestamp;
+
+        // calculate the size of the data
+        if ($this->getCacheSize($data) > $this->maxCacheSize) {
+            // Log a warning instead of removing the oldest timestamp
+            Log::warning("Rate limit exceeded: Cache size for '{$this->cacheKey}' has exceeded the configured limit of {$this->maxCacheSize} bytes.");
         }
+
+        // Store the updated data back into the cache
+        Cache::put($this->cacheKey, $data, $this->cacheTtl);
     }
 
     private function getCacheSize(array $data): int
