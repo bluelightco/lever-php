@@ -25,73 +25,37 @@ class LeverRateStore implements Store
 
     public function get(): array
     {
-        $data = [];
-        $part = 1;
+        // Retrieve the entire data from cache
+        $data = Cache::get($this->cacheKey, []);
 
-        // Retrieve and merge all parts
-        while (Cache::has($this->getCacheKey($part))) { // Check if the part exists
-            $partData = Cache::get($this->getCacheKey($part), []); // Retrieve the part data
-            $data = array_merge($data, $partData); // Merge the part data with the main data
-            $part++; // Move to the next part
-        }
+        // Filter out any timestamps that are older than the cacheTtl
+        $filteredData = array_filter($data, function ($timestamp) {
+            return $timestamp >= now()->timestamp - $this->cacheTtl;
+        });
 
-        return $data;
+        return $filteredData;
     }
 
     public function push(int $timestamp, int $limit)
     {
-        // Retrieve current data
+        // Retrieve the current filtered data
         $data = $this->get();
+
+        // Add the new timestamp
         $data[] = $timestamp;
 
-        // Split data into parts and store each part separately
-        $parts = $this->splitDataIntoParts($data);
-
-        // Store each part in the cache with separate keys
-        foreach ($parts as $index => $partData) {
-            Cache::put($this->getCacheKey($index + 1), $partData, $this->cacheTtl);
+        // calculate the size of the data
+        if ($this->getCacheSize($data) > $this->maxCacheSize) {
+            // If the size exceeds the maxCacheSize, remove the oldest timestamp
+            array_shift($data);
         }
 
-        // Remove any leftover parts that may have been left from previous larger dataset
-        $this->cleanupExtraParts(count($parts) + 1);
-    }
-
-    private function splitDataIntoParts(array $data): array
-    {
-        $parts = [];
-        $currentPart = [];
-
-        foreach ($data as $item) {
-            $currentPart[] = $item;
-            if ($this->getCacheSize($currentPart) > $this->maxCacheSize) {
-                array_pop($currentPart); // Remove the last item that caused the size to exceed
-                $parts[] = $currentPart; // Store the current part in the parts array
-                $currentPart = [$item]; // Start a new part with the last item that was removed
-            }
-        }
-
-        if (! empty($currentPart)) {
-            $parts[] = $currentPart; // Store the current part in the parts array
-        }
-
-        return $parts;
-    }
-
-    private function getCacheKey(int $part): string
-    {
-        return $this->cacheKey.':'.$part;
+        // Store the updated data back into the cache
+        Cache::put($this->cacheKey, $data, $this->cacheTtl);
     }
 
     private function getCacheSize(array $data): int
     {
         return strlen(serialize($data));
-    }
-
-    private function cleanupExtraParts(int $startPart)
-    {
-        while (Cache::has($this->getCacheKey($startPart))) {
-            Cache::forget($this->getCacheKey($startPart));
-            $startPart++;
-        }
     }
 }
