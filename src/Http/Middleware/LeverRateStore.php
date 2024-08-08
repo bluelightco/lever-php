@@ -3,6 +3,7 @@
 namespace Bluelightco\LeverPhp\Http\Middleware;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Spatie\GuzzleRateLimiterMiddleware\Store;
 
 /**
@@ -46,8 +47,8 @@ class LeverRateStore implements Store
 
         // calculate the size of the data
         if ($this->getCacheSize($data) > $this->maxCacheSize) {
-            // If the size exceeds the maxCacheSize, remove the oldest timestamp
-            array_shift($data);
+            // Log a warning instead of removing the oldest timestamp
+            Log::warning("Rate limit exceeded: Cache size for '{$this->cacheKey}' has exceeded the configured limit of {$this->maxCacheSize} bytes.");
         }
 
         // Store the updated data back into the cache
