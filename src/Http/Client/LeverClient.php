@@ -135,10 +135,10 @@ class LeverClient
 
                 $this->endpoint = $endpoint;
                 $this->options = $options;
-                unset($this->options['offset']);
+                unset($this->options['query']['offset']);
 
                 if (! empty($response['next'])) {
-                    $this->options['query']['offset'] = json_decode(urldecode($response['next']));
+                    $this->addParameter('offset', (string) $response['next']);
 
                     $response = $this->get();
                 } else {
