@@ -26,6 +26,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->mockHandler = new MockHandler();
 
         $this->container = [];

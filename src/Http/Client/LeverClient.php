@@ -2,6 +2,7 @@
 
 namespace Bluelightco\LeverPhp\Http\Client;
 
+use Bluelightco\LeverPhp\Http\Exceptions\LeverApiException;
 use Bluelightco\LeverPhp\Http\Middleware\LeverRateStore;
 use Bluelightco\LeverPhp\Http\Middleware\QueryStringCleanerMiddleware;
 use Bluelightco\LeverPhp\Http\Responses\ApiResponse;
@@ -14,7 +15,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\LazyCollection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use RuntimeException;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Spatie\GuzzleRateLimiterMiddleware\Store;
 
@@ -470,6 +470,14 @@ class LeverClient
 
     private function handleException(Exception $e, string $method, string $endpoint, array $options = []): void
     {
+        $statusCode = null;
+        $responseBody = null;
+
+        if ($e instanceof ClientException && $e->getResponse()) {
+            $statusCode = $e->getResponse()->getStatusCode();
+            $responseBody = (string) $e->getResponse()->getBody();
+        }
+
         Log::error("HTTP $method error: ".$e->getMessage(), [
             'message' => $e->getMessage(),
             'package_context' => [
@@ -477,11 +485,16 @@ class LeverClient
                 'method' => $method,
                 'endpoint' => $endpoint,
                 'options' => json_encode($options),
-                'response' => ($e instanceof ClientException ? ($e->getResponse() ? $e->getResponse()->getBody()->getContents() : null) : null),
+                'response' => $responseBody,
             ],
             'exception' => $e,
         ]);
 
-        throw new RuntimeException("Error executing HTTP $method. Please check the logs for more details.");
+        throw new LeverApiException(
+            "Error executing HTTP $method. Please check the logs for more details.",
+            $statusCode,
+            $responseBody,
+            $e,
+        );
     }
 }
