@@ -2,6 +2,7 @@
 
 namespace Bluelightco\LeverPhp\Tests;
 
+use Bluelightco\LeverPhp\Http\Exceptions\LeverApiException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\LazyCollection;
 use RuntimeException;
@@ -127,6 +128,24 @@ class OpportunitiesTest extends TestCase
             'opportunities',
             (string) $this->container[0]['request']->getUri()
         );
+    }
+
+    /** @test */
+    public function client_error_exposes_status_and_response_body()
+    {
+        $body = '{"code":"BadRequestError","message":"Input HTML is not valid."}';
+        $this->mockHandler->append(new Response(400, [], $body));
+
+        try {
+            $this->lever->opportunities()->create(['name' => 'x']);
+            $this->fail('Expected LeverApiException was not thrown.');
+        } catch (LeverApiException $e) {
+            $this->assertSame(400, $e->getStatusCode());
+            $this->assertSame($body, $e->getResponseBody());
+            $this->assertTrue($e->isClientError());
+            $this->assertFalse($e->isServerError());
+            $this->assertInstanceOf(\GuzzleHttp\Exception\ClientException::class, $e->getPrevious());
+        }
     }
 
     /** @test */
