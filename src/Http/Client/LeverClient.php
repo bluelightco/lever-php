@@ -11,7 +11,6 @@ use GrahamCampbell\GuzzleFactory\GuzzleFactory;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\HandlerStack;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\LazyCollection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -478,20 +477,8 @@ class LeverClient
             $responseBody = (string) $e->getResponse()->getBody();
         }
 
-        Log::error("HTTP $method error: ".$e->getMessage(), [
-            'message' => $e->getMessage(),
-            'package_context' => [
-                'package' => 'Bluelightco\LeverPhp',
-                'method' => $method,
-                'endpoint' => $endpoint,
-                'options' => json_encode($options),
-                'response' => $responseBody,
-            ],
-            'exception' => $e,
-        ]);
-
         throw new LeverApiException(
-            "Error executing HTTP $method. Please check the logs for more details.",
+            "HTTP $method $endpoint failed: ".$e->getMessage(),
             $statusCode,
             $responseBody,
             $e,
