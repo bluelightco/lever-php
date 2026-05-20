@@ -12,7 +12,7 @@ class QueryStringCleanerMiddleware
             return function (RequestInterface $request, array $options) use ($handler) {
                 $query = $request->getUri()->getQuery();
                 $request = $request->withUri(
-                    $request->getUri()->withQuery(preg_replace('/%5B[0-9]%5D/', '', $query)),
+                    $request->getUri()->withQuery(preg_replace('/%5B\d+%5D/', '', $query)),
                     true
                 );
 

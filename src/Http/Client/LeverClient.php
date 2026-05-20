@@ -161,7 +161,7 @@ class LeverClient
     private function prepareOptions(array $body): array
     {
         if (isset($this->options['query'])) {
-            $this->options['query'] = preg_replace('/%5B[0-9]%5D/', '',
+            $this->options['query'] = preg_replace('/%5B\d+%5D/', '',
                 http_build_query($this->options['query'])
             );
         }
