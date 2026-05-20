@@ -249,6 +249,35 @@ class OpportunitiesTest extends TestCase
     }
 
     /** @test */
+    public function retrieve_opportunities_with_more_than_ten_postings_strips_all_array_indices()
+    {
+        // Regression: QueryStringCleanerMiddleware and prepareOptions() previously
+        // used preg_replace('/%5B[0-9]%5D/', ...) which only stripped single-digit
+        // indices ([0]-[9]). Calling posting() 11+ times left posting_id[10]+ in
+        // the URL, producing malformed query strings that Lever rejects.
+        $this->mockHandler->append(new Response(200, [], '{"data": {}}'));
+
+        $ids = [];
+        $client = $this->lever->opportunities();
+        for ($i = 0; $i < 12; $i++) {
+            $id = sprintf('00000000-0000-0000-0000-%012d', $i + 1);
+            $ids[] = $id;
+            $client->posting($id);
+        }
+        $client->fetch();
+
+        $url = (string) $this->container[0]['request']->getUri();
+
+        $this->assertStringNotContainsString('%5B', $url, 'URL must not contain array brackets');
+        $this->assertStringNotContainsString('posting_id[', urldecode($url), 'URL must not contain array indices');
+        $this->assertEquals(12, substr_count($url, 'posting_id='));
+
+        foreach ($ids as $id) {
+            $this->assertStringContainsString('posting_id='.$id, $url);
+        }
+    }
+
+    /** @test */
     public function check_archived_reason_is_added_correctly_to_body()
     {
         $this->mockHandler->append(new Response(200, [], '{"data": {}}'));
